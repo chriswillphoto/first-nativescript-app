@@ -7,7 +7,7 @@
             <v-template>
             <Label class='message' textWrap='true'>
               <FormattedString textWrap='true'>
-                <Span :text='item[1] + "\n"' style='display: block;' />
+                <Span :text='item.title + "\n"' style='display: block;' />
                 <Span text='test' style='font-size: 12px;' />
               </FormattedString>
             </Label>
@@ -66,8 +66,8 @@
           transitionAndroid: {},
 
           props: {
-            title: item[1],
-            trackableID: item[0]
+            title: item.title,
+            trackableID: item.id
           }
         });
       }
