@@ -10,6 +10,10 @@
           <Label text='Select Measurable Type' width='80%' color='white' />
           <Label :text='type' width='20%' alignSelf='flex-end' textAlign='right' style='text-align: right;' color='white' @tap='changeType' />
         </FlexboxLayout>
+        <FlexboxLayout backgroundColor="#3c495e">
+          <Label text='Select frequency' />
+          <Label :text='frequency' width='20%' alignSelf='flex-end' textAlign='right' style='text-align: right;' color='white' @tap='changeFrequency' />
+        </FlexboxLayout>
         <!-- <Label>
           <FormattedString>
             <Span text='Select type' style='display: block; width: 40%; margin-right: 40px;' />
@@ -24,26 +28,43 @@
 
 <script>
 import TypeModal from '~/components/modals/TypeModal.vue'
+import FreqModal from '~/components/modals/FrequencyModal.vue'
 export default {
   props: [
     'id'
   ],
   data() {
     return {
-      frequencyList: ['Daily', 'Weekly', 'Fortnightly', 'Monthly'],
       measurableName: '',
       type: 'Yes/No',
-      frequency: '',
-      TypeModal: TypeModal
+      frequency: 'Daily',
+      TypeModal,
+      FreqModal,
     }
   },
   methods: {
     addAndClose() {
 
+      if(this.measurableName.trim().length){
+        let measurableObj = {
+          title: this.measurableName.trim(),
+          type: this.type,
+          frequency: this.frequency,
+          trackable_id: this.id,
+        }
+
+        this.$store.dispatch('addMeasurable', measurableObj)
+        this.$modal.close()
+      }
     },
     changeType() {
-      this.$showModal(TypeModal, {fullscreen: true}).then((newType) => {
+      this.$showModal(TypeModal, {fullscreen: true, props: {selected: this.type}}).then((newType) => {
         this.type = newType
+      })
+    },
+    changeFrequency() {
+      this.$showModal(FreqModal, {fullscreen: true, props: {selected: this.frequency}}).then((newFreq) => {
+        this.frequency = newFreq
       })
     }
   }

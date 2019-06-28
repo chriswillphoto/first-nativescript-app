@@ -11,7 +11,8 @@
         <Label class='message' textWrap='true'>
           <FormattedString textWrap='true'>
             <Span :text='item.title + "\n"' style='display: block;' />
-            <Span :text='index' style='font-size: 12px;' />
+            <Span :text='item.type + " "' style='font-size: 12px;' />
+            <Span :text='item.frequency' style='font-size: 12px;' />
           </FormattedString>
         </Label>
         </v-template>

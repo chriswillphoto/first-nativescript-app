@@ -18,6 +18,9 @@
 
 <script>
 export default {
+  props: [
+    'selected'
+  ],
   data(){
     return {
       type: '',
@@ -29,11 +32,13 @@ export default {
     changeType(item, index){
       this.active = index
       this.type = item
-      console.log(this.classes)
     },
     addAndClose(){
       this.$modal.close(this.type)
     }
+  },
+  beforeMount(){
+    this.active = this.typeList.indexOf(this.selected)
   }
 }
 </script>
