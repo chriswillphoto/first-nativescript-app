@@ -4,7 +4,7 @@ import Vuex from 'vuex';
 const Sqlite = require("nativescript-sqlite");
 // import {createConnection, getManager} from 'typeorm/browser';
 
-import {normalizeTrackable} from '~/utils.js'
+import {normalizeTrackable, normalizeMeasurable} from '~/utils.js'
 
 Vue.use(Vuex);
 
@@ -13,6 +13,9 @@ const store = new Vuex.Store({
     database: null,
     data: [],
     trackables: [],
+    measurables: {
+      1: [{title: 'testtitle'}]
+    },
   },
   mutations: {
     init(state, data) {
@@ -26,8 +29,22 @@ const store = new Vuex.Store({
           console.error(err)
         }else{
           resultSet.forEach(element => {
-            state.trackables.push(normalizeTrackable(element))
+            let normalized = normalizeTrackable(element)
+            state.trackables.push(normalized)
+            state.measurables[normalized.id] = []
           });
+        }
+      })
+
+      state.database.all('SELECT * FROM measurables', (err, resultSet) => {
+        
+        if(err){
+          console.error(err)
+        }else{
+          resultSet.forEach(element => {
+            let normalized = normalizeMeasurable(element)
+            state.measurables[normalized.trackable_id].push(normalized)
+          })
         }
       })
     },
@@ -37,7 +54,7 @@ const store = new Vuex.Store({
         state.trackables.push(normalizeTrackable(row))
       })
     }
-  },
+  }, //end mutations
   actions: {
     init(context) {
       // Sqlite.deleteDatabase('mydb')
@@ -49,7 +66,7 @@ const store = new Vuex.Store({
           await db.execSQL("CREATE TABLE IF NOT EXISTS trackables (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL UNIQUE)", function(err, id){
             err ? console.log("ERROR: ", err) : console.log('trackable table created')
           })
-          await db.execSQL("CREATE TABLE IF NOT EXISTS measurables (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, type TEXT, trackable_id INTEGER, FOREIGN KEY(trackable_id) REFERENCES trackables(id))", function(err, id){
+          await db.execSQL("CREATE TABLE IF NOT EXISTS measurables (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, type TEXT, frequency TEXT, trackable_id INTEGER, FOREIGN KEY(trackable_id) REFERENCES trackables(id) ON DELETE CASCADE)", function(err, id){
             err ? console.log("ERROR: ", err) : console.log('measurables table created')
           })
           await context.commit('init', {database: db})
@@ -65,6 +82,9 @@ const store = new Vuex.Store({
     },
     deleteTrackable(context, trackableID){
       console.log(trackableID)
+    },
+    addMeasurable(context, data){
+
     }
   } //end actions
 }); // end store

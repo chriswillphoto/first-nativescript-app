@@ -18,7 +18,7 @@
 </template>
 
 <script>
-  import addGroup from '~/components/AddNewTrackableGroup.vue'
+  import addGroup from '~/components/modals/AddNewTrackableGroup.vue'
   import trackableDetail from '~/components/TrackablesDetail.vue'
   export default {
     data() {
