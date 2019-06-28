@@ -8,7 +8,7 @@
         <TextField v-model="measurableName" hint='Enter Measurable Name' style.placeholderColor='rgba(255,255,255,0.6)'/>
         <FlexboxLayout backgroundColor="#3c495e">
           <Label text='Select Measurable Type' width='80%' color='white' />
-          <Label :text='type' width='20%' alignSelf='flex-end' textAlign='right' style='text-align: right;' color='white' @tap='test' />
+          <Label :text='type' width='20%' alignSelf='flex-end' textAlign='right' style='text-align: right;' color='white' @tap='changeType' />
         </FlexboxLayout>
         <!-- <Label>
           <FormattedString>
@@ -41,7 +41,7 @@ export default {
     addAndClose() {
 
     },
-    test() {
+    changeType() {
       this.$showModal(TypeModal, {fullscreen: true}).then((newType) => {
         this.type = newType
       })

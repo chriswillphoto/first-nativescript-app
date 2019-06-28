@@ -8,7 +8,7 @@
             <Label class='message' textWrap='true'>
               <FormattedString textWrap='true'>
                 <Span :text='item.title + "\n"' style='display: block;' />
-                <Span text='test' style='font-size: 12px;' />
+                <Span :text='"test: " + item.id' style='font-size: 12px;' />
               </FormattedString>
             </Label>
             </v-template>
@@ -39,22 +39,6 @@
       trackableDetail
     },
     methods: {
-      getter() {
-        this.$store.state.database.all('SELECT * FROM trackables', (err, resultSet) => {
-          if(err){
-            console.error(err)
-          }else{
-            // console.log(resultSet[0][1]);
-            this.msg = 'test'
-            // this.msg = resultSet[0][1]
-            resultSet.forEach(element => {
-              this.test.push(element)
-            });
-            // this.test.push(resultSet)
-            console.log(resultSet)
-          }
-        })
-      },
       addNew(){
         this.$showModal(this.modal)
       },
