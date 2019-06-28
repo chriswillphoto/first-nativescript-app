@@ -1,6 +1,8 @@
 <template>
     <Page>
-        <ActionBar title="Welcome to NativeScript-Vue!"/>
+        <ActionBar title="Welcome to NativeScript-Vue!">
+          <NavigationButton text="Cancel" android.systemIcon="ic_menu_close_clear_cancel" @tap="$navigateTo(testPage)" /> <!-- TODO: REMOVE IN PRODUCTION -->
+        </ActionBar>
         <DockLayout stretchLastChild='true' style.backgroundColor='rgb(235,235,235)'>
           <Button text='addNew' @tap='addNew' dock='bottom' />
           <ListView for='item in trackables' style.backgroundColor='white' @itemTap='toDetail'>
@@ -20,6 +22,7 @@
 <script>
   import addGroup from '~/components/modals/AddNewTrackableGroup.vue'
   import trackableDetail from '~/components/TrackablesDetail.vue'
+  import testPage from '~/components/Testpage.vue'
   export default {
     data() {
       return {
@@ -27,7 +30,8 @@
         db: this.$store.state.database,
         test: [],
         modal: addGroup,
-        Detail: trackableDetail
+        Detail: trackableDetail,
+        testPage
       }
     },
     computed: {
