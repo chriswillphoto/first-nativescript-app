@@ -1,7 +1,7 @@
 <template>
 <Frame>
   <Page>
-    <ActionBar title="Detail">
+    <ActionBar :title="this.process + ' Trackable'">
       <NavigationButton text="Cancel" android.systemIcon="ic_menu_close_clear_cancel" @tap="$modal.close" />
     </ActionBar>
     <StackLayout backgroundColor="#3c495e">
@@ -16,12 +16,18 @@
 export default {
   data(){
     return {
-      textFieldValue: ""
+      textFieldValue: "",
+      process: this.editType ? "Edit" : "New"
     }
   },
+  props: ['editType'],
   methods: {
     addAndClose() {
-      this.$store.dispatch('addNewTrackable', this.textFieldValue)
+      if(this.process === 'New'){
+        this.$store.dispatch('addNewTrackable', this.textFieldValue)
+      }else{
+
+      }
       this.$modal.close()
     }
   }

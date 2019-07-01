@@ -13,7 +13,9 @@ const store = new Vuex.Store({
     database: null,
     data: [],
     trackables: [],
+    trackableLookup: {},
     measurables: {},
+    allMeasurables: []
   },
   mutations: {
     init(state, data) {
@@ -30,6 +32,7 @@ const store = new Vuex.Store({
             let normalized = normalizeTrackable(element)
             state.trackables.push(normalized)
             state.measurables[normalized.id] = []
+            state.trackableLookup[normalized.id] = normalized
             console.log(normalized.id, 'MEASURABLES', state.measurables[normalized.id])
           });
         }
@@ -42,7 +45,9 @@ const store = new Vuex.Store({
         }else{
           resultSet.forEach(element => {
             let normalized = normalizeMeasurable(element)
+            normalized.trackable = state.trackableLookup[normalized.trackable_id]
             state.measurables[normalized.trackable_id].push(normalized)
+            state.allMeasurables.push(normalized)
           })
         }
       })
@@ -58,7 +63,9 @@ const store = new Vuex.Store({
     loadNewMeasurable(state, data){
       state.database.get(`SELECT * FROM measurables WHERE id=${data}`, function(err, row){
         let normalized = normalizeMeasurable(row)
+        normalized.trackable = state.trackableLookup[normalized.trackable_id] 
         state.measurables[normalized.trackable_id].push(normalized)
+        state.allMeasurables.push(normalized)
       })
     }
   }, //end mutations
