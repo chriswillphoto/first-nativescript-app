@@ -60,16 +60,17 @@ const store = new Vuex.Store({
         console.log('Err: ', err, 'Row: ', row)
         state.trackables.push(normalized)
         state.measurables[normalized.id] = []
+        state.trackableLookup[normalized.id] = normalized
       })
     },
-    deleteFromTrackables(state, trackableID) {
+    deleteFromTrackables(state, deleteID) {
       state.trackables = state.trackables.filter((track) => {
-        return track.id != trackableID
+        return track.id != deleteID
       })
-      state.trackableLookup[trackableID] = null
-      state.measurables[trackableID] = null
+      state.trackableLookup[deleteID] = null
+      state.measurables[deleteID] = null
       state.measurables.all = state.measurables.all.filter((measurable) => {
-        return measurable.trackable_id != trackableID
+        return measurable.trackable_id != deleteID
       })
     },
     loadNewMeasurable(state, data){
@@ -119,6 +120,7 @@ const store = new Vuex.Store({
       })
 
       context.commit('deleteFromTrackables', trackableID)
+      // context.commit('load')
     },
     addMeasurable(context, measurableData){
       console.log(measurableData)

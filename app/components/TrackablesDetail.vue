@@ -39,7 +39,9 @@ export default {
       return this.$store.state.measurables[this.trackableID]
     },
     title(){
-      return this.$store.state.trackableLookup[this.trackableID]["title"]
+      var title = this.$store.state.trackableLookup[this.trackableID]["title"]
+
+      return title ? title :  "Deleted"
     }
   },
   props: ['trackableID'],
