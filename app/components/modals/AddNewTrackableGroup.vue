@@ -6,7 +6,7 @@
     </ActionBar>
     <StackLayout backgroundColor="#3c495e">
       <TextField v-model="textFieldValue" hint='Enter Trackable Group Name' style.placeholderColor='rgba(255,255,255,0.6)'/>
-      <Button text='Add' @tap='addAndClose'/>
+      <Button text='Save' @tap='addAndClose'/>
     </StackLayout>
   </Page>
 </Frame>
@@ -16,18 +16,20 @@
 export default {
   data(){
     return {
-      textFieldValue: "",
+      textFieldValue: this.title ? this.title : "",
       process: this.editType ? "Edit" : "New"
     }
   },
-  props: ['editType'],
+  props: ['editType', 'title', 'trackableID'],
   methods: {
     addAndClose() {
       if(this.process === 'New'){
         this.$store.dispatch('addNewTrackable', this.textFieldValue)
       }else{
-
+        let newData = {id: this.trackableID, title: this.textFieldValue}
+        this.$store.dispatch('editTrackable', newData)
       }
+      
       this.$modal.close()
     }
   }

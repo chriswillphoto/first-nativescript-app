@@ -25,6 +25,7 @@ const store = new Vuex.Store({
     load(state, data) {
       state.database.all('SELECT * FROM trackables', (err, resultSet) => {
         state.trackables = []
+        state.trackableLookup = {}
         if(err){
           console.error(err)
         }else{
@@ -35,6 +36,7 @@ const store = new Vuex.Store({
             state.trackableLookup[normalized.id] = normalized
             console.log(normalized.id, 'MEASURABLES', state.measurables[normalized.id])
           });
+          console.log(state.trackableLookup)
         }
       })
 
@@ -43,6 +45,7 @@ const store = new Vuex.Store({
         if(err){
           console.error(err)
         }else{
+          state.allMeasurables = []
           resultSet.forEach(element => {
             let normalized = normalizeMeasurable(element)
             normalized.trackable = state.trackableLookup[normalized.trackable_id]
@@ -93,6 +96,13 @@ const store = new Vuex.Store({
         err ? console.log("ERROR ADDING TRACKABLE: ", err) : console.log("TRACKABLE ADDED: ", id)
       })
       context.commit('loadNewTrackable', trackableTitle)
+    },
+    editTrackable(context, updateData){
+      context.state.database.execSQL(`UPDATE trackables SET title = '${updateData.title}' WHERE id = ${updateData.id} `, function(err, id) {
+        err ? console.log("ERROR ADDING TRACKABLE: ", err) : console.log("TRACKABLE EDITED: ", id)
+      })
+
+      context.commit('load')
     },
     deleteTrackable(context, trackableID){
       console.log(trackableID)

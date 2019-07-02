@@ -2,6 +2,7 @@
   <Page>
     <ActionBar id=2 :title="title">
       <NavigationButton text="Cancel" android.systemIcon="ic_menu_close_clear_cancel" @tap="$navigateTo(Home)" />
+      <ActionItem android.systemIcon='ic_menu_edit' ios.systemIcon='3' @tap='edit' />
       <ActionItem android.systemIcon='ic_menu_delete' ios.systemIcon='3' @tap='deletePrompt' />
     </ActionBar>
     <DockLayout stretchLastChild='true' style.backgroundColor='rgb(235,235,235)'>
@@ -9,9 +10,9 @@
       <ListView for='(item, index) in measurables' style.backgroundColor='white' @itemTap='toDetail'>
         <v-template>
         <Label class='message' textWrap='true'>
-          <FormattedString textWrap='true'>
+          <FormattedString>
             <Span :text='item.title + "\n"' style='display: block;' />
-            <Span :text='item.type + " "' style='font-size: 12px;' />
+            <Span :text='item.type + "\n"' style='font-size: 12px;' />
             <Span :text='item.frequency' style='font-size: 12px;' />
           </FormattedString>
         </Label>
@@ -24,19 +25,24 @@
 <script>
 import Home from '~/components/App.vue'
 import Modal from '~/components/modals/AddMeasurable.vue'
+import Edit from '~/components/modals/AddNewTrackableGroup.vue'
 export default {
   data() {
     return {
       Home: Home,
-      Modal: Modal
+      Modal: Modal,
+      Edit: Edit
     }
   },
   computed: {
     measurables() {
       return this.$store.state.measurables[this.trackableID]
+    },
+    title(){
+      return this.$store.state.trackableLookup[this.trackableID]["title"]
     }
   },
-  props: ['trackableID', 'title'],
+  props: ['trackableID'],
   methods: {
     deletePrompt(){
         confirm({
@@ -47,6 +53,9 @@ export default {
         }).then(result => {
           if(result == true) { this.$store.dispatch('deleteTrackable', this.trackableID) }
         });
+    },
+    edit(){
+      this.$showModal(this.Edit, {props: {editType: "Edit", title: this.title, trackableID: this.trackableID}})
     },
     measurableModal(){
       this.$showModal(this.Modal, {props: {id: this.trackableID}})

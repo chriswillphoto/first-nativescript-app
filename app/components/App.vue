@@ -10,7 +10,7 @@
             <Label class='message' textWrap='true'>
               <FormattedString textWrap='true'>
                 <Span :text='item.title + "\n"' style='display: block;' />
-                <Span :text='"test: " + item.id' style='font-size: 12px;' />
+                <Span :text='"id: " + item.id' style='font-size: 12px;' />
               </FormattedString>
             </Label>
             </v-template>
@@ -64,11 +64,6 @@
 </script>
 
 <style scoped>
-    AbsoluteLayout {
-      position: absolute;
-      left: 0;
-      top: 0;
-    }
     ActionBar {
         background-color: #53ba82;
         color: #ffffff;
