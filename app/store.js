@@ -14,8 +14,7 @@ const store = new Vuex.Store({
     data: [],
     trackables: [],
     trackableLookup: {},
-    measurables: {},
-    allMeasurables: []
+    measurables: {}
   },
   mutations: {
     init(state, data) {
@@ -45,12 +44,12 @@ const store = new Vuex.Store({
         if(err){
           console.error(err)
         }else{
-          state.allMeasurables = []
+          state.measurables.all = []
           resultSet.forEach(element => {
             let normalized = normalizeMeasurable(element)
             normalized.trackable = state.trackableLookup[normalized.trackable_id]
             state.measurables[normalized.trackable_id].push(normalized)
-            state.allMeasurables.push(normalized)
+            state.measurables.all.push(normalized)
           })
         }
       })
@@ -58,9 +57,19 @@ const store = new Vuex.Store({
     loadNewTrackable(state, data){
       state.database.get(`SELECT * FROM trackables WHERE title="${data}"`, function(err, row){
         let normalized = normalizeTrackable(row)
-        console.log(err, row)
+        console.log('Err: ', err, 'Row: ', row)
         state.trackables.push(normalized)
         state.measurables[normalized.id] = []
+      })
+    },
+    deleteFromTrackables(state, trackableID) {
+      state.trackables = state.trackables.filter((track) => {
+        return track.id != trackableID
+      })
+      state.trackableLookup[trackableID] = null
+      state.measurables[trackableID] = null
+      state.measurables.all = state.measurables.all.filter((measurable) => {
+        return measurable.trackable_id != trackableID
       })
     },
     loadNewMeasurable(state, data){
@@ -68,7 +77,7 @@ const store = new Vuex.Store({
         let normalized = normalizeMeasurable(row)
         normalized.trackable = state.trackableLookup[normalized.trackable_id] 
         state.measurables[normalized.trackable_id].push(normalized)
-        state.allMeasurables.push(normalized)
+        state.measurables.all.push(normalized)
       })
     }
   }, //end mutations
@@ -99,13 +108,17 @@ const store = new Vuex.Store({
     },
     editTrackable(context, updateData){
       context.state.database.execSQL(`UPDATE trackables SET title = '${updateData.title}' WHERE id = ${updateData.id} `, function(err, id) {
-        err ? console.log("ERROR ADDING TRACKABLE: ", err) : console.log("TRACKABLE EDITED: ", id)
+        err ? console.log("ERROR EDITING TRACKABLE: ", err) : console.log("TRACKABLE EDITED: ", id)
       })
 
       context.commit('load')
     },
     deleteTrackable(context, trackableID){
-      console.log(trackableID)
+      context.state.database.execSQL(`DELETE FROM trackables WHERE id=${trackableID}`, function(err, id){
+        err ? console.log("ERROR DELETING TRACKABLE: ", err) : console.log("TRACKABLE DELETED: ", id)
+      })
+
+      context.commit('deleteFromTrackables', trackableID)
     },
     addMeasurable(context, measurableData){
       console.log(measurableData)

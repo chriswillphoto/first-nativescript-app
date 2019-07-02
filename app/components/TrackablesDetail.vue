@@ -51,7 +51,7 @@ export default {
           okButtonText: "Delete",
           cancelButtonText: "Cancel"
         }).then(result => {
-          if(result == true) { this.$store.dispatch('deleteTrackable', this.trackableID) }
+          if(result == true) { this.$store.dispatch('deleteTrackable', this.trackableID); this.$navigateTo(Home) }
         });
     },
     edit(){

@@ -1,6 +1,6 @@
 <template>
   <Page>
-    <ActionBar id=3 title="Test"/>
+    <ActionBar id=3 title="TestPage"/>
     <GridLayout columns="*, *">
       <ListView for='item in trackables' col='0'>
         <v-template>
@@ -40,7 +40,7 @@ export default {
   },
   computed: {
     trackables(){ return this.$store.state.trackables },
-    measurables() { return this.$store.state.allMeasurables }
+    measurables() { return this.$store.state.measurables.all }
   },
   methods: {
 
