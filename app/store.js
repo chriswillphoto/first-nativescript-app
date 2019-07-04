@@ -22,6 +22,7 @@ const store = new Vuex.Store({
       console.log("DATABASE INIT", state.database.isOpen())
     },
     load(state, data) {
+      // fetch trackables
       state.database.all('SELECT * FROM trackables', (err, resultSet) => {
         state.trackables = []
         state.trackableLookup = {}
@@ -38,9 +39,8 @@ const store = new Vuex.Store({
           console.log(state.trackableLookup)
         }
       })
-
+      // fetch measurables
       state.database.all('SELECT * FROM measurables', (err, resultSet) => {
-        
         if(err){
           console.error(err)
         }else{
@@ -51,6 +51,7 @@ const store = new Vuex.Store({
             state.measurables[normalized.trackable_id].push(normalized)
             state.measurables.all.push(normalized)
           })
+          console.log('MEASURABLES ALL', state.measurables.all)
         }
       })
     },
@@ -95,6 +96,9 @@ const store = new Vuex.Store({
           })
           await db.execSQL("CREATE TABLE IF NOT EXISTS measurables (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, type TEXT, frequency TEXT, trackable_id INTEGER, FOREIGN KEY(trackable_id) REFERENCES trackables(id) ON DELETE CASCADE)", function(err, id){
             err ? console.log("ERROR: ", err) : console.log('measurables table created')
+          })
+          await db.execSQL("CREATE TABLE IF NOT EXISTS datapoints (id INTEGER PRIMARY KEY AUTOINCREMENT, value TEXT NOT NULL, timestamp TEXT NOT NULL, measurable_id INTEGER, FOREIGN KEY(measurable_id) REFERENCES measurables(id) ON DELETE CASCADE)", function(err, id){
+            err ? console.log("ERROR: ", err) : console.log('datapoints table created')
           })
           await context.commit('init', {database: db})
           context.commit('load')

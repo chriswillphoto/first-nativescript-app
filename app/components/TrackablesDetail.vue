@@ -26,12 +26,14 @@
 import Home from '~/components/App.vue'
 import Modal from '~/components/modals/AddMeasurable.vue'
 import Edit from '~/components/modals/AddNewTrackableGroup.vue'
+import List from '~/components/MeasurablesDetail.vue'
 export default {
   data() {
     return {
       Home: Home,
       Modal: Modal,
-      Edit: Edit
+      Edit: Edit,
+      List: List
     }
   },
   computed: {
@@ -63,7 +65,17 @@ export default {
       this.$showModal(this.Modal, {props: {id: this.trackableID}})
     },
     toDetail(event){
-      console.log(event)
+      this.$navigateTo(List, {
+        transition: {},
+        transitioniOS: {},
+        transitionAndroid: {},
+
+        props: {
+          title: event.item.title,
+          measurableID: event.item.id,
+          trackableID: event.item.trackable_id
+        }
+      })
     }
   }
 }
