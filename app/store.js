@@ -81,6 +81,15 @@ const store = new Vuex.Store({
         state.measurables[normalized.trackable_id].push(normalized)
         state.measurables.all.push(normalized)
       })
+    },
+    deleteFromMeasurables(state, data){
+      state.measurables[data.trackableID] = state.measurables[data.trackableID].filter((measure) => {
+        return measure.id != data.measurableID
+      })
+      state.measurables.all = state.measurables.all.filter((measure) => {
+        return measure.id != data.measurableID
+      })
+
     }
   }, //end mutations
   actions: {
@@ -132,6 +141,12 @@ const store = new Vuex.Store({
       context.state.database.execSQL(`INSERT INTO measurables (title, type, frequency, trackable_id) VALUES ("${measurableData.title}", "${measurableData.type}", "${measurableData.frequency}", ${measurableData.trackable_id})`, function(err, id){
         console.log(err, id)
         context.commit('loadNewMeasurable', id)
+      })
+    },
+    deleteMeasurable(context, measurableData){
+      context.state.database.execSQL(`DELETE FROM measurables WHERE id=${measurableData.measurableID}`, function(err, id){
+        console.log(err, id)
+        context.commit('deleteFromMeasurables', measurableData)
       })
     }
   } //end actions

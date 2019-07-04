@@ -5,17 +5,21 @@
       <ActionItem android.systemIcon='ic_menu_edit' ios.systemIcon='3' @tap='edit' />
       <ActionItem android.systemIcon='ic_menu_delete' ios.systemIcon='3' @tap='deletePrompt' />
     </ActionBar>
-    
+    <FlexboxLayout backgroundColor='pink' alignItems='flex-start'>
+      <Label width='100%' :text='month.name' backgroundColor='skyblue' style.paddingTop='8px' style.paddingBottom='8px' style.textAlignment='center' />
+    </FlexboxLayout>
   </Page>
 </template>
 
 <script>
 import Trackables from '~/components/TrackablesDetail.vue'
+import {MonthLookup} from '~/utils.js'
 export default {
   props: ['measurableID', 'trackableID'],
   data(){
     return {
-      Trackables
+      Trackables,
+      selectedMonth: new Date(Date.now()).getMonth(),
     }
   },
   computed: {
@@ -23,9 +27,33 @@ export default {
       let measurable = this.$store.state.measurables[this.trackableID].find((element) => {
         return element.id == this.measurableID
       })
-
       return measurable ? measurable.title : ''
+    },
+    month(){
+      return MonthLookup[this.selectedMonth]
     }
+  },
+  methods: {
+    deletePrompt(){
+      confirm({
+          title: "Delete Measurable?",
+          message: "This will permanently delete this measurable and all associated data",
+          okButtonText: "Delete",
+          cancelButtonText: "Cancel"
+        }).then(result => {
+          if(result == true) {
+            this.$store.dispatch('deleteMeasurable', {trackableID: this.trackableID, measurableID: this.measurableID})
+            this.$navigateTo(Trackables, {props: {trackableID: this.trackableID}})
+          }
+        });
+    },
+    edit(){
+      console.log('TODO EDIT')
+    }
+  },
+  mounted(){
+    var test = new Date(Date.now());
+    console.log(test.getDay())
   }
 }
 </script>

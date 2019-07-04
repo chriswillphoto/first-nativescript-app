@@ -49,14 +49,14 @@ export default {
   props: ['trackableID'],
   methods: {
     deletePrompt(){
-        confirm({
-          title: "Delete Trackable?",
-          message: "This will permanently delete this trackable group and all associated data",
-          okButtonText: "Delete",
-          cancelButtonText: "Cancel"
-        }).then(result => {
-          if(result == true) { this.$store.dispatch('deleteTrackable', this.trackableID); this.$navigateTo(Home) }
-        });
+      confirm({
+        title: "Delete Trackable?",
+        message: "This will permanently delete this trackable group and all associated data",
+        okButtonText: "Delete",
+        cancelButtonText: "Cancel"
+      }).then(result => {
+        if(result == true) { this.$store.dispatch('deleteTrackable', this.trackableID); this.$navigateTo(Home) }
+      });
     },
     edit(){
       this.$showModal(this.Edit, {props: {editType: "Edit", title: this.title, trackableID: this.trackableID}})
