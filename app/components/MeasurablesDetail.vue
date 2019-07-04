@@ -5,9 +5,12 @@
       <ActionItem android.systemIcon='ic_menu_edit' ios.systemIcon='3' @tap='edit' />
       <ActionItem android.systemIcon='ic_menu_delete' ios.systemIcon='3' @tap='deletePrompt' />
     </ActionBar>
-    <FlexboxLayout backgroundColor='pink' alignItems='flex-start'>
+    <ScrollView>
+    <FlexboxLayout backgroundColor='pink' alignItems='flex-start' flexWrap='wrap'>
       <Label width='100%' :text='month.name' backgroundColor='skyblue' style.paddingTop='8px' style.paddingBottom='8px' style.textAlignment='center' />
+      <Button class='type-button' :key='index+item' v-for='(item, index) in days' :text="index+1" width='80px' height='80px' backgroundColor='green' />
     </FlexboxLayout>
+    </ScrollView>
   </Page>
 </template>
 
@@ -33,6 +36,9 @@ export default {
     },
     month(){
       return MonthLookup[this.selectedMonth]
+    },
+    days(){
+      return [...Array(this.month.days).keys()]
     }
   },
   methods: {
