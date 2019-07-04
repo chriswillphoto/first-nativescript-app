@@ -143,6 +143,14 @@ const store = new Vuex.Store({
         context.commit('loadNewMeasurable', id)
       })
     },
+    editMeasurable(context, measurableData){
+      console.log(measurableData)
+      context.state.database.execSQL(`UPDATE measurables SET title = '${measurableData.title}', type = '${measurableData.type}', frequency = '${measurableData.frequency}' WHERE id=${measurableData.id}`, function(err, id){
+        console.log(err, id)
+        context.commit('load')
+      })
+      
+    },
     deleteMeasurable(context, measurableData){
       context.state.database.execSQL(`DELETE FROM measurables WHERE id=${measurableData.measurableID}`, function(err, id){
         console.log(err, id)

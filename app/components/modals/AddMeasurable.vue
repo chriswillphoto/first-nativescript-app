@@ -14,12 +14,6 @@
           <Label text='Select frequency' />
           <Label :text='frequency' width='20%' alignSelf='flex-end' textAlign='right' style='text-align: right;' color='white' @tap='changeFrequency' />
         </FlexboxLayout>
-        <!-- <Label>
-          <FormattedString>
-            <Span text='Select type' style='display: block; width: 40%; margin-right: 40px;' />
-            <Span :text='type' style='margin-left: 40%;' />
-          </FormattedString>
-        </Label> -->
         <Button text='Add' @tap='addAndClose'/>
       </StackLayout>
     </Page>
@@ -31,13 +25,14 @@ import TypeModal from '~/components/modals/TypeModal.vue'
 import FreqModal from '~/components/modals/FrequencyModal.vue'
 export default {
   props: [
-    'id'
+    'trackableID', 'oldType', 'oldFreq', 'measurableID', 'editType', 'oldName'
   ],
   data() {
     return {
-      measurableName: '',
-      type: 'Yes/No',
-      frequency: 'Daily',
+      measurableName: this.oldName ? this.oldName : '',
+      type: this.oldType ? this.oldType : 'Yes/No',
+      frequency: this.oldFreq ? this.oldFreq : 'Daily',
+      process: this.editType ? 'Edit' : 'New',
       TypeModal,
       FreqModal,
     }
@@ -50,10 +45,15 @@ export default {
           title: this.measurableName.trim(),
           type: this.type,
           frequency: this.frequency,
-          trackable_id: this.id,
+          trackable_id: this.trackableID,
         }
 
-        this.$store.dispatch('addMeasurable', measurableObj)
+        if(this.process === 'New'){
+          this.$store.dispatch('addMeasurable', measurableObj)
+        }else{
+          measurableObj.id = this.measurableID
+          this.$store.dispatch('editMeasurable', measurableObj)
+        }
         this.$modal.close()
       }
     },

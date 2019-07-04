@@ -1,6 +1,6 @@
 <template>
   <Page>
-    <ActionBar id=3 :title="title">
+    <ActionBar id=3 :title="activeMeasurable ? activeMeasurable.title : ''">
       <NavigationButton text="Cancel" android.systemIcon="ic_menu_close_clear_cancel" @tap="$navigateTo(Trackables, {props: {trackableID}})" />
       <ActionItem android.systemIcon='ic_menu_edit' ios.systemIcon='3' @tap='edit' />
       <ActionItem android.systemIcon='ic_menu_delete' ios.systemIcon='3' @tap='deletePrompt' />
@@ -13,21 +13,23 @@
 
 <script>
 import Trackables from '~/components/TrackablesDetail.vue'
+import Edit from '~/components/modals/AddMeasurable.vue'
 import {MonthLookup} from '~/utils.js'
 export default {
   props: ['measurableID', 'trackableID'],
   data(){
     return {
       Trackables,
+      Edit,
       selectedMonth: new Date(Date.now()).getMonth(),
     }
   },
   computed: {
-    title() {
+    activeMeasurable() {
       let measurable = this.$store.state.measurables[this.trackableID].find((element) => {
         return element.id == this.measurableID
       })
-      return measurable ? measurable.title : ''
+      return measurable
     },
     month(){
       return MonthLookup[this.selectedMonth]
@@ -48,12 +50,13 @@ export default {
         });
     },
     edit(){
-      console.log('TODO EDIT')
+      this.$showModal(this.Edit, {props: {editType: "Edit", measurableID: this.activeMeasurable.id, trackableID: this.activeMeasurable.trackable_id, oldFreq: this.activeMeasurable.frequency, oldType: this.activeMeasurable.type, oldName: this.activeMeasurable.title}})
     }
   },
   mounted(){
     var test = new Date(Date.now());
     console.log(test.getDay())
+    console.log(this.activeMeasurable)
   }
 }
 </script>
