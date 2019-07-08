@@ -4,7 +4,7 @@ import Vuex from 'vuex';
 const Sqlite = require("nativescript-sqlite");
 // import {createConnection, getManager} from 'typeorm/browser';
 
-import {normalizeTrackable, normalizeMeasurable} from '~/utils.js'
+import {normalizeTrackable, normalizeMeasurable, normalizeDatapoint} from '~/utils.js'
 
 Vue.use(Vuex);
 
@@ -14,7 +14,16 @@ const store = new Vuex.Store({
     data: [],
     trackables: [],
     trackableLookup: {},
-    measurables: {}
+    measurables: {
+      //[
+        //trackable_id: measurable obj
+      //]
+    },
+    datapoints: {
+      //[
+      //  measurable_id: datapoint obj
+      //]
+    }
   },
   mutations: {
     init(state, data) {
@@ -49,9 +58,23 @@ const store = new Vuex.Store({
             let normalized = normalizeMeasurable(element)
             normalized.trackable = state.trackableLookup[normalized.trackable_id]
             state.measurables[normalized.trackable_id].push(normalized)
+            state.datapoints[normalized.id] = []
             state.measurables.all.push(normalized)
           })
           console.log('MEASURABLES ALL', state.measurables.all)
+        }
+      })
+      //fetch datapoints
+      state.database.all('SELECT * FROM datapoints', (err, resultSet) => {
+        if(err){
+          console.log(err)
+        }else{
+          state.datapoints.all = []
+          resultSet.forEach(element => {
+            let normalized = normalizeDatapoint(element)
+            state.datapoints[normalized.measurable_id].push(normalized)
+            state.datapoints.all.push(normalized) // TODO: DELETE ALL ARRAY IN PRODUCTION
+          })
         }
       })
     },
@@ -106,7 +129,7 @@ const store = new Vuex.Store({
           await db.execSQL("CREATE TABLE IF NOT EXISTS measurables (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, type TEXT, frequency TEXT, trackable_id INTEGER, FOREIGN KEY(trackable_id) REFERENCES trackables(id) ON DELETE CASCADE)", function(err, id){
             err ? console.log("ERROR: ", err) : console.log('measurables table created')
           })
-          await db.execSQL("CREATE TABLE IF NOT EXISTS datapoints (id INTEGER PRIMARY KEY AUTOINCREMENT, value TEXT NOT NULL, timestamp TEXT NOT NULL, measurable_id INTEGER, FOREIGN KEY(measurable_id) REFERENCES measurables(id) ON DELETE CASCADE)", function(err, id){
+          await db.execSQL("CREATE TABLE IF NOT EXISTS datapoints (id INTEGER PRIMARY KEY AUTOINCREMENT, value TEXT NOT NULL, timestamp TEXT NOT NULL, measurable_id INTEGER, trackable_id INTEGER, FOREIGN KEY(measurable_id) REFERENCES measurables(id) ON DELETE CASCADE, FOREIGN KEY(trackable_id) REFERENCES trackables(id))", function(err, id){
             err ? console.log("ERROR: ", err) : console.log('datapoints table created')
           })
           await context.commit('init', {database: db})

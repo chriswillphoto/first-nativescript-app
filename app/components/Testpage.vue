@@ -1,7 +1,7 @@
 <template>
   <Page>
     <ActionBar id=3 title="TestPage"/>
-    <GridLayout columns="*, *">
+    <GridLayout columns="*, *, *">
       <ListView for='item in trackables' col='0'>
         <v-template>
           <Label textWrap='true'>
@@ -25,6 +25,19 @@
           </Label>
         </v-template>
       </ListView>
+      <ListView for='item in datapoints' col='1'>
+        <v-template>
+          <Label textWrap='true'>
+          <FormattedString>
+            <Span :text='item.title + "\n"' style='display: block;' />
+            <Span :text='"id: " + item.id + "\n"' style='font-size: 12px;' />
+            <Span :text='"trackable: " + item.value + "\n"' style='font-size: 12px;' />
+            <Span :text='"type: " + item.timestamp + "\n"' style='font-size: 12px;' />
+            <Span :text='"frequency: " + item.measurable_id' style='font-size: 12px;' />
+          </FormattedString>
+          </Label>
+        </v-template>
+      </ListView>
     </GridLayout>
   </Page>
 </template>
@@ -40,7 +53,8 @@ export default {
   },
   computed: {
     trackables(){ return this.$store.state.trackables },
-    measurables() { return this.$store.state.measurables.all }
+    measurables() { return this.$store.state.measurables.all },
+    datapoints() { return this.$store.state.datapoints.all }
   },
   methods: {
 

@@ -23,8 +23,25 @@ export var normalizeMeasurable = function(row){
     trackable_id
   }
 }
-
 //id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, type TEXT, frequency TEXT, trackable_id INTEGER,
+
+export var normalizeDatapoint = function(row) {
+  var id = row[0]
+  var value = row[1]
+  var timestamp = row[2]
+  var measurable_id = row[3]
+  var trackable_id = row[4]
+
+  return {
+    id,
+    value,
+    timestamp,
+    measurable_id,
+    trackable_id
+  }
+}
+// id INTEGER PRIMARY KEY AUTOINCREMENT, value TEXT NOT NULL, timestamp TEXT NOT NULL, measurable_id INTEGER, trackable_id INTEGER, FOREIGN KEY(measurable_id) REFERENCES measurables(id) ON DELETE CASCADE, FOREIGN KEY(trackable_id) REFERENCES trackables(id)
+
 
 export var MonthLookup = {
   0: {days: 31, name: 'January'},
@@ -39,4 +56,8 @@ export var MonthLookup = {
   9: {days: 31, name: 'October'},
   10: {days: 30, name: 'November'},
   11: {days: 31, name: 'December'}
+} //TODO: LEAP YEAR FUNCTIONALITY
+
+export var streakFinder = function(measurable, datapointArray) {
+  //TODO
 }
