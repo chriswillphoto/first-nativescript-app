@@ -19,6 +19,7 @@ const store = new Vuex.Store({
         //trackable_id: measurable obj
       //]
     },
+    measurablesLookup: {},
     datapoints: {
       //[
       //  measurable_id: datapoint obj
@@ -50,6 +51,7 @@ const store = new Vuex.Store({
       })
       // fetch measurables
       state.database.all('SELECT * FROM measurables', (err, resultSet) => {
+        state.measurablesLookup = {}
         if(err){
           console.error(err)
         }else{
@@ -58,6 +60,7 @@ const store = new Vuex.Store({
             let normalized = normalizeMeasurable(element)
             normalized.trackable = state.trackableLookup[normalized.trackable_id]
             state.measurables[normalized.trackable_id].push(normalized)
+            state.measurablesLookup[normalized.id] = normalized
             state.datapoints[normalized.id] = []
             state.measurables.all.push(normalized)
           })

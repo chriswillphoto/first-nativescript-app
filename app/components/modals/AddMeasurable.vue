@@ -1,7 +1,7 @@
 <template>
   <Frame>
     <Page>
-      <ActionBar title="Detail">
+      <ActionBar :title="process">
         <NavigationButton text="Cancel" android.systemIcon="ic_menu_close_clear_cancel" @tap="$modal.close" />
       </ActionBar>
       <StackLayout backgroundColor="#3c495e" style.padding='16px'>

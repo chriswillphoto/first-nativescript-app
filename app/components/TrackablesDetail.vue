@@ -73,7 +73,8 @@ export default {
         props: {
           title: event.item.title,
           measurableID: event.item.id,
-          trackableID: event.item.trackable_id
+          trackableID: event.item.trackable_id,
+          measurableObj: event.item
         }
       })
     }
