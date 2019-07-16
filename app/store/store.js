@@ -4,8 +4,6 @@ import Vuex from 'vuex';
 
 // import {createConnection, getManager} from 'typeorm/browser';
 
-import {normalizeTrackable, normalizeMeasurable, normalizeDatapoint} from '~/utils.js'
-
 import mutations from '~/store/mutations.js'
 import actions from '~/store/actions.js'
 
@@ -18,7 +16,7 @@ const store = new Vuex.Store({
     data: [],
     trackables: [],
     trackableLookup: {},
-    measurables: { /*t rackable_id: [measurable objs] */},
+    measurables: { /* trackable_id: [measurable objs] */},
     measurablesLookup: {},
   datapoints: { /*  measurable_id: [datapoint objs] */ }
   },
