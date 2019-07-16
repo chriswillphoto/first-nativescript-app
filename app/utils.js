@@ -28,7 +28,7 @@ export var normalizeMeasurable = function(row){
 export var normalizeDatapoint = function(row) {
   var id = row[0]
   var value = row[1]
-  var timestamp = row[2]
+  var timestamp = new Date(row[2])
   var measurable_id = row[3]
   var trackable_id = row[4]
 

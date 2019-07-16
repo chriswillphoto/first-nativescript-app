@@ -15,7 +15,9 @@
       <Label width='10%' text='left' style='padding-top: 8px; padding-bottom: 8px; text-align: center;' @tap='downMonth' />
       <Label width='80%' :text='month.name' backgroundColor='skyblue' style.paddingTop='8px' style.paddingBottom='8px' style.textAlignment='center' />
       <Label width='10%' text='right' style='padding-top: 8px; padding-bottom: 8px; text-align: center;' @tap='upMonth' />
-      <Button class='type-button' :class='item.status' :key='index+item.status' v-for='(item, index) in days' :text="item.date.getDate()" width='14.3%' height='40px' @tap='toggle(item)' />
+      <Button class='type-button' :class='item.status' :key='index+item.status+item.date.getDate()' v-for='(item, index) in monthfiller.before' :text="item.date.getDate()" width='14.3%' height='40px' />
+      <Button class='type-button' :class='item.status' :key='index+item.status' v-for='(item, index) in dayButtons' :text="item.date.getDate()" width='14.3%' height='40px' @tap='toggle(item)' />
+      <Button class='type-button' :class='item.status' :key='index+item.status+item.date.getDate()' v-for='(item, index) in monthfiller.after' :text="item.date.getDate()" width='14.3%' height='40px' />
       </FlexboxLayout>
 
       <FlexboxLayout row='1' backgroundColor='pink' alignContent='stretch' alignItems='stretch' flexWrap='wrap'  v-else-if='viewOptions[viewSelect] == "Daily"'>
@@ -46,7 +48,8 @@ export default {
       selectedDay: new Date(Date.now()).getDate(),
       selectedYear: new Date(Date.now()).getFullYear(),
       viewSelect: 0,
-      viewOptions: ['Monthly', 'Weekly', 'Daily']
+      viewOptions: ['Monthly', 'Weekly', 'Daily'],
+      dayButtons: []
     }
   },
   computed: {
@@ -70,19 +73,10 @@ export default {
     month(){
       return MonthLookup[this.selectedMonth]
     },
-    days(){
-      let numberOfDays = this.month.days
-      let dayArray = []
-      for(var i=1;i<=numberOfDays;i++){
-        let dayObj = {}
-        dayObj.date = new Date(this.selectedYear, this.selectedMonth, i)
-        dayObj.status = 'inactive'
-        if(this.monthDatapoints[new Date(dayObj.date).getDate()]){ dayObj.status = 'active' }
-        dayArray.push(dayObj)
-      }
-      let dayZero = dayArray[0].date.getDay()
-      let lastDay = dayArray[dayArray.length - 1].date.getDay()
-
+    monthfiller(){
+      let dayZero = this.dayButtons[0].date.getDay()
+      let lastDay = this.dayButtons[this.dayButtons.length - 1].date.getDay()
+      let monthFiller = {before: [], after: []}
       if(dayZero != 0){
         let prevMonthDay = MonthLookup[this.selectedMonth == 0 ? 11 : this.selectedMonth - 1].days
         for(var i = dayZero -1; i>=0; i--){
@@ -90,7 +84,7 @@ export default {
           dayObj.date = new Date(this.selectedYear, this.selectedMonth - 1, prevMonthDay) //TODO FIX FOR YEAR CHANGES
           dayObj.status = 'month-filler'
           prevMonthDay -= 1
-          dayArray.unshift(dayObj)
+          monthFiller.before.unshift(dayObj)
         }
       }
 
@@ -101,20 +95,20 @@ export default {
           dayObj.date = new Date(this.selectedYear, this.selectedMonth + 1, nextMonthDay) //TODO FIX FOR YEAR CHANGES
           dayObj.status = 'month-filler'
           nextMonthDay += 1
-          dayArray.push(dayObj)
+          monthFiller.after.push(dayObj)
         }
       }
       // console.log('DAY', dayArray)
-      return dayArray
+      return monthFiller
     },
     monthDatapoints(){
       var datArrayObj = {}
       let datArray = this.$store.state.datapoints[this.measurableID]
       let filteredToMonth = datArray.filter((datapoint) => {
-        let month = new Date(datapoint.timestamp).getMonth()
+        let month = datapoint.timestamp.getMonth()
         return month == this.selectedMonth
       }).map((datapoint) => {
-        datArrayObj[new Date(datapoint.timestamp).getDate()] = datapoint
+        datArrayObj[datapoint.timestamp.getDate()] = datapoint
       })
 
       return datArrayObj
@@ -143,9 +137,22 @@ export default {
     upMonth(){
       if(this.selectedMonth < 11){ this.selectedMonth += 1 }else{ this.selectedMonth = 0 }
       console.log(this.days)
+      this.daysRender()
     },
     downMonth(){
       if(this.selectedMonth > 0){ this.selectedMonth -= 1 }else{ this.selectedMonth = 11 }
+      this.daysRender()
+    },
+    daysRender(){
+      this.dayButtons = []
+      let numberOfDays = this.month.days
+      for(var i=1;i<=numberOfDays;i++){
+        let dayObj = {}
+        dayObj.date = new Date(this.selectedYear, this.selectedMonth, i)
+        dayObj.status = 'inactive'
+        if(this.monthDatapoints[dayObj.date.getDate()]){ dayObj.status = 'active' }
+        this.dayButtons.push(dayObj)
+      }
     },
     toggle(item){
       if(this.type == 'Yes/No' && item.status != 'active'){
@@ -155,17 +162,19 @@ export default {
           value: 'Yes',
           timestamp: item.date.toString()
         }).then(() => {
-          console.log("DONE")
+          this.dayButtons.forEach(function(day) {
+            if(day.date.getDate() == item.date.getDate()){ day.status = 'active' }
+          })
         })
       }
     }
   },
+  beforeMount() {
+    this.daysRender()
+  },
   mounted(){
-    var test = new Date(Date.now());
     
-    console.log(test.getDay())
-    // console.log(this.activeMeasurable)
-  }
+  },
 }
 </script>
 
