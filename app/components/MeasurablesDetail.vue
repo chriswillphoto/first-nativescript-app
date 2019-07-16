@@ -162,9 +162,9 @@ export default {
           value: 'Yes',
           timestamp: item.date.toString()
         }).then(() => {
-          this.dayButtons.forEach(function(day) {
-            if(day.date.getDate() == item.date.getDate()){ day.status = 'active' }
-          })
+          this.dayButtons.find(function(day) {
+            return day.date.getDate() == item.date.getDate()
+          }).status = 'active'
         })
       }
     }
