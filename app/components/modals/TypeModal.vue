@@ -8,7 +8,7 @@
       </StackLayout> -->
       <StackLayout backgroundColor="#3c495e">
       <FlexboxLayout alignItems='flex-start' flexWrap='wrap' justifyContent='flex-start'>
-        <Button :class='index == active ? "active" : ""' class='type-button' :key='index+item' v-for='(item, index) in typeList' :text="item" width='80px' height='80px' @tap='changeType(item, index)' />
+        <Button :class='index == active ? "active" : ""' class='type-select-button' :key='index+item' v-for='(item, index) in typeList' :text="item" width='80px' height='80px' @tap='changeType(item, index)' />
       </FlexboxLayout>
       <Button text='Add' @tap='addAndClose'/>
       </StackLayout>
@@ -17,6 +17,8 @@
 </template>
 
 <script>
+import {measurableTypes} from '~/utils.js'
+
 export default {
   props: [
     'selected'
@@ -24,7 +26,7 @@ export default {
   data(){
     return {
       type: '',
-      typeList: ['Yes/No', '%', 'KG', '$', 'Time'],
+      typeList: measurableTypes,
       active: null
     }
   },
@@ -44,7 +46,7 @@ export default {
 </script>
 
 <style>
-  .type-button {
+  .type-select-button {
     width: 80px;
     height: 80px;
     text-align: center;
@@ -53,7 +55,7 @@ export default {
     background-color: red;
   }
 
-  .type-button.active {
+  .type-select-button.active {
     background-color: pink;
   }
 

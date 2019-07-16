@@ -62,14 +62,14 @@ export default {
       this.$showModal(this.Edit, {props: {editType: "Edit", title: this.title, trackableID: this.trackableID}})
     },
     measurableModal(){
-      this.$showModal(this.Modal, {props: {id: this.trackableID}})
+      this.$showModal(this.Modal, {props: {trackableID: this.trackableID}})
     },
     toDetail(event){
+      console.log(event)
       this.$navigateTo(List, {
         transition: {},
         transitioniOS: {},
         transitionAndroid: {},
-
         props: {
           title: event.item.title,
           measurableID: event.item.id,

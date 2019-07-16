@@ -25,15 +25,15 @@
           </Label>
         </v-template>
       </ListView>
-      <ListView for='item in datapoints' col='1'>
+      <ListView for='item in datapoints' col='2'>
         <v-template>
           <Label textWrap='true'>
           <FormattedString>
             <Span :text='item.title + "\n"' style='display: block;' />
             <Span :text='"id: " + item.id + "\n"' style='font-size: 12px;' />
-            <Span :text='"trackable: " + item.value + "\n"' style='font-size: 12px;' />
-            <Span :text='"type: " + item.timestamp + "\n"' style='font-size: 12px;' />
-            <Span :text='"frequency: " + item.measurable_id' style='font-size: 12px;' />
+            <Span :text='"trackable: " + item.trackable_id + "\n"' style='font-size: 12px;' />
+            <Span :text='"date: " + item.timestamp + "\n"' style='font-size: 12px;' />
+            <Span :text='"value: " + item.value' style='font-size: 12px;' />
           </FormattedString>
           </Label>
         </v-template>

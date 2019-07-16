@@ -15,7 +15,7 @@
       <Label width='10%' text='left' style='padding-top: 8px; padding-bottom: 8px; text-align: center;' @tap='downMonth' />
       <Label width='80%' :text='month.name' backgroundColor='skyblue' style.paddingTop='8px' style.paddingBottom='8px' style.textAlignment='center' />
       <Label width='10%' text='right' style='padding-top: 8px; padding-bottom: 8px; text-align: center;' @tap='upMonth' />
-      <Button class='type-button' :class='item.status' :key='index+item' v-for='(item, index) in days' :text="item.date.getDate()" width='14.3%' height='40px' @tap='toggle(item)' />
+      <Button class='type-button' :class='item.status' :key='index+item.status' v-for='(item, index) in days' :text="item.date.getDate()" width='14.3%' height='40px' @tap='toggle(item)' />
       </FlexboxLayout>
 
       <FlexboxLayout row='1' backgroundColor='pink' alignContent='stretch' alignItems='stretch' flexWrap='wrap'  v-else-if='viewOptions[viewSelect] == "Daily"'>
@@ -52,10 +52,8 @@ export default {
   computed: {
     activeMeasurable() {
       let measurable = this.$store.state.measurablesLookup[this.measurableID]
-      measurable ? this.type = measurable.type  : this.type = ''
-      measurable ? this.frequency = measurable.frequency : this.frequency = ''
-      
-      return measurable
+
+      return measurable 
     },
     title(){
       var title = this.$store.state.measurablesLookup[this.measurableID]['title']
@@ -79,7 +77,7 @@ export default {
         let dayObj = {}
         dayObj.date = new Date(this.selectedYear, this.selectedMonth, i)
         dayObj.status = 'inactive'
-
+        if(this.monthDatapoints[new Date(dayObj.date).getDate()]){ dayObj.status = 'active' }
         dayArray.push(dayObj)
       }
       let dayZero = dayArray[0].date.getDay()
@@ -91,7 +89,7 @@ export default {
           let dayObj = {}
           dayObj.date = new Date(this.selectedYear, this.selectedMonth - 1, prevMonthDay) //TODO FIX FOR YEAR CHANGES
           dayObj.status = 'month-filler'
-          prevMonth -= 1
+          prevMonthDay -= 1
           dayArray.unshift(dayObj)
         }
       }
@@ -102,11 +100,11 @@ export default {
           let dayObj = {}
           dayObj.date = new Date(this.selectedYear, this.selectedMonth + 1, nextMonthDay) //TODO FIX FOR YEAR CHANGES
           dayObj.status = 'month-filler'
-          nextMonth += 1
+          nextMonthDay += 1
           dayArray.push(dayObj)
         }
       }
-      console.log('DAY', dayArray)
+      // console.log('DAY', dayArray)
       return dayArray
     },
     monthDatapoints(){
@@ -116,7 +114,7 @@ export default {
         let month = new Date(datapoint.timestamp).getMonth()
         return month == this.selectedMonth
       }).map((datapoint) => {
-        datArrayObj[datapoint.timestamp.getDate()] = datapoint
+        datArrayObj[new Date(datapoint.timestamp).getDate()] = datapoint
       })
 
       return datArrayObj
@@ -150,12 +148,16 @@ export default {
       if(this.selectedMonth > 0){ this.selectedMonth -= 1 }else{ this.selectedMonth = 11 }
     },
     toggle(item){
-      this.days.forEach((day) => {
-      if(day.status != 'month-filler' && day.date == item.date) {
-        day.status = 'month-filler'
+      if(this.type == 'Yes/No' && item.status != 'active'){
+        this.$store.dispatch('addDatapoint', {
+          measurable_id: this.measurableID,
+          trackable_id: this.trackableID,
+          value: 'Yes',
+          timestamp: item.date.toString()
+        }).then(() => {
+          console.log("DONE")
+        })
       }
-    })
-    console.log(this.days)
     }
   },
   mounted(){

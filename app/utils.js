@@ -61,3 +61,5 @@ export var MonthLookup = {
 export var streakFinder = function(measurable, datapointArray) {
   //TODO
 }
+
+export var measurableTypes = ['Yes/No', '%', 'KG', '$', 'Time']
