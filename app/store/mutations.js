@@ -1,5 +1,15 @@
 import {normalizeTrackable, normalizeMeasurable, normalizeDatapoint} from '~/utils.js'
 
+//   state: {
+//     database: null,
+//     data: [],
+//     trackables: [],
+//     trackableLookup: {},
+//     measurables: { /* trackable_id: [measurable objs] */},
+//     measurablesLookup: {},
+//   datapoints: { /*  measurable_id: [datapoint objs] */ }
+//   }
+
 export default {
   init(state, data) {
     state.database = data.database

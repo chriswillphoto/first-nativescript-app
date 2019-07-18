@@ -29,6 +29,8 @@
         </Label>
         <Label width='10%' text='right' style='padding-top: 8px; padding-bottom: 8px; text-align: center;' @tap='upMonth' />
       </FlexboxLayout>
+
+      <WeeklyView v-else-if="viewOptions[viewSelect] == 'Weekly'" />
     </GridLayout>
     </ScrollView>
   </Page>
@@ -37,9 +39,11 @@
 <script>
 import Trackables from '~/components/TrackablesDetail.vue'
 import Edit from '~/components/modals/AddMeasurable.vue'
+import WeeklyView from '~/components/calendars/WeeklyView.vue'
 import {MonthLookup} from '~/utils.js'
 export default {
   props: ['measurableID', 'trackableID'],
+  components: {WeeklyView},
   data(){
     return {
       Trackables,
