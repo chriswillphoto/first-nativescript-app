@@ -49,7 +49,8 @@ export default {
       selectedYear: new Date(Date.now()).getFullYear(),
       viewSelect: 0,
       viewOptions: ['Monthly', 'Weekly', 'Daily'],
-      dayButtons: []
+      dayButtons: [],
+      loading: false
     }
   },
   computed: {
@@ -150,12 +151,13 @@ export default {
         let dayObj = {}
         dayObj.date = new Date(this.selectedYear, this.selectedMonth, i)
         dayObj.status = 'inactive'
-        if(this.monthDatapoints[dayObj.date.getDate()]){ dayObj.status = 'active' }
+        if(this.monthDatapoints[dayObj.date.getDate()]){ dayObj.status = 'active'; }
         this.dayButtons.push(dayObj)
       }
     },
     toggle(item){
-      if(this.type == 'Yes/No' && item.status != 'active'){
+      if(!this.loading && this.type == 'Yes/No' && item.status != 'active'){
+        this.loading = true
         this.$store.dispatch('addDatapoint', {
           measurable_id: this.measurableID,
           trackable_id: this.trackableID,
@@ -165,6 +167,17 @@ export default {
           this.dayButtons.find(function(day) {
             return day.date.getDate() == item.date.getDate()
           }).status = 'active'
+          this.loading = false
+        })        
+      }
+
+      if(!this.loading && this.type == 'Yes/No' && item.status == 'active'){
+        this.loading = true
+        this.$store.dispatch('removeDatapoint', {measurable_id: this.measurableID, timestamp: item.date.toString()}).then(() => {
+          this.dayButtons.find(function(day) {
+            return day.date.getDate() == item.date.getDate()
+          }).status = 'inactive'
+          this.loading = false
         })
       }
     }

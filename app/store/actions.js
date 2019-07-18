@@ -71,5 +71,11 @@ export default {
       console.log(err, id)
       return context.commit('load')
     })
+  },
+  removeDatapoint(context, data){
+    context.state.database.execSQL(`DELETE FROM datapoints WHERE timestamp='${data.timestamp}' AND measurable_id=${data.measurable_id}`, function(err, id){
+      console.log('del datapoints: ', err ? err : id)
+      return context.commit('load')
+    })
   }
 }
