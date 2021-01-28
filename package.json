@@ -34,7 +34,7 @@
     "clean-webpack-plugin": "^0.1.19",
     "copy-webpack-plugin": "^4.5.2",
     "css-loader": "^1.0.0",
-    "electron": "^1.8.8",
+    "electron": "^9.4.0",
     "lazy": "1.0.11",
     "nativescript-dev-webpack": "0.24.1",
     "nativescript-vue-template-compiler": "^2.0.0",
